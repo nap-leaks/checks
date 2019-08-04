@@ -22,7 +22,7 @@ var processor = (index) => {
   getEmails()
   .then((documents) => {
     var json = JSON.stringify(documents);
-    fs.writeFileSync('./www/db.json', json);
+    fs.writeFileSync('./email/db.json', json);
     client.close();
   })
 }
@@ -30,22 +30,16 @@ var processor = (index) => {
 var getEmails = (index) => {
   return new Promise((resolve, reject) => {
     db.collection(collectionName)
-    .find({
+    .distinct(
+      'CR17_EMAIL', {
       'CR17_EMAIL' : {
         $exists: true,
         $ne: null
       }
-    })
-    .project({
-      CR17_EMAIL:1,
-      _id:0
-    })
-    .limit(600000)
-    .toArray(function (error, response) {
+    },function (error, response) {
       if(error)
         return reject(error);
-        
-      resolve(response.map(x => sha256(x.CR17_EMAIL)));
+      resolve(response.map(x => sha256(x)));
     });
   })
 }

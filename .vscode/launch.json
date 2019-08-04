@@ -15,7 +15,7 @@
             "type": "node",
             "request": "launch",
             "name": "Export",
-            "program": "${workspaceFolder}/Export.js",
+            "program": "${workspaceFolder}/export.js",
             "envFile": "${workspaceRoot}/.env",
         }
     ]
