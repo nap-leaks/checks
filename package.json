@@ -1,0 +1,18 @@
+{
+  "name": "nap-leaks",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nap-leaks/checks.git"
+},
+  "scripts": {
+    "import": "env-cmd env node import.js",
+    "export": "env-cmd env node export.js"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "env-cmd": "^9.0.3",
+    "js-sha256": "^0.9.0",
+    "mongodb": "^3.3.0-beta2"
+  }
+}

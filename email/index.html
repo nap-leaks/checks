@@ -1,0 +1,108 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>#НАПлийкс - провери имейл</title>
+  <script src="https://cdn.jsdelivr.net/gh/emn178/js-sha256/build/sha256.min.js"></script>
+  <style>
+    html, body{
+      margin: 0 auto;
+      padding: 0;
+      background: #ccc;
+      text-align: center;
+    }
+    body {
+      padding-top: 30px;
+    }
+    .error{
+      color:red;
+    }
+    .success{
+      color:greenyellow;
+    }
+  </style>
+</head>
+<body>
+  <span>
+      <h2>#НАПлийкс - проверка на имейл</h2>
+      <p>В изтеклият на 15.07.2019г. файл - minfin_leak.zip се намира документ - <b>REG_DATA/TR17_EMAIL_ADDRESSES</b>, който съдържа <b>588078</b> записа с email адреси.</p>
+      <p>В тази връзка е от значение, че този масив може да бъде използван за последващи фишинг атаки.</p><p>Повече за този тип атаки може да прочетете в <a href="https://bg.wikipedia.org/wiki/%D0%A4%D0%B8%D1%88%D0%B8%D0%BD%D0%B3">WIKIPEDIA</a></p>
+      <p>В случай, че ваш имейл се намира в изтеклият масив, то бъдете особено внимателни, когато получавате имейли</p>
+      <i>Вашата собствена бдителност е най-ефективният начин да сте в безопасност. Електронната поща може да бъде добре написана, да няма правописни грешки, цветовете на фирменото лого може да са легитимни, URL адресът и имейл адресът могат да изглеждат надеждни, но ако смятате, че все пак нещо не е наред, вярвайте на инстинктите си. Не отговаряйте на имейла. Вместо това,  обадете се директно на организацията-подател и проверете точността на получената от вас информация. След като разговаряте с тях и те потвърдят, че имейлът е измамен, маркирайте имейла, който сте получили като спам.</i>
+      <hr>
+      <p>Начинът по който е създадена страницата, извличането на данните от оригиналният масив, извличането на отделните имейл адреси, както и тази страница може да намерите <a href="https://github.com/nap-leaks/checks">тук</a></p>
+      <hr>
+      <p>При натискане на бутона "Провери", масив с hash стойности, извлечени от оригиналният масив, ще се свалят на вашият браузър, след което въведеният в полето имейл ще бъде проверен срещу изтегленият масив.</p>
+      <p>Масивът е с размер 40mb, така че бъдете търпеливи и изчакайте няколко секунди докато се изтегли.</p>
+      <input type="email" id="email" placeholder="Въведи имейл">
+      <input type="button" id="btnCheck" onclick="onCheckClick()" value="Провери">
+      <br>
+      <h4 id="txtInfo"></h4>
+  </span>
+  <script>
+    var db = null;
+
+    var txtInfo = document.getElementById('txtInfo'),
+        emailEle = document.getElementById('email'),
+        btnCheckEle = document.getElementById('btnCheck');
+    
+    var onCheckClick = (evt)=>{
+      txtInfo.classList = [];
+      if(!checkIsEmail(emailEle.value)){
+        error('Въведената стойност не е имейл!')
+        return;
+      }
+      txtInfo.innerText = 'Зареждане, моля изчакайте...';
+      if(db){
+        checkEmail()
+      }
+      else{
+        getDB("/db.json", (data) => {
+          if(data){
+            db = JSON.parse(data);
+            checkEmail();
+          }
+          else {
+            error('Грешка при изтегляне на масива. Моля опитай отново :/');
+          }
+        });
+      }
+    }
+
+    function checkIsEmail(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
+
+    function checkEmail() {
+      var emailHash = sha256(emailEle.value);
+      var exists = db.includes(emailHash);
+      txtInfo.innerText = `въведеният имейл ${exists ? 'СЪЩЕСТВУВА' : 'НЕ е открит'} в обработеният масив.`;
+      txtInfo.classList.add(exists ? 'error' : 'success');
+    }
+
+    function error(msg){
+      txtInfo.innerText = msg;
+      txtInfo.classList.add('error');
+    }
+
+    function getDB(path, callback) {
+      btnCheckEle.disabled = true;
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          btnCheckEle.disabled = false;
+          if (xhr.status == 200) {
+            callback(xhr.responseText);
+          } else {
+            callback(null);
+          }
+        }
+      };
+      xhr.open("GET", path);
+      xhr.send();
+    }
+    
+  </script>
+</body>
+
+</html>
