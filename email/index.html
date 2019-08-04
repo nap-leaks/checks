@@ -56,7 +56,7 @@
         checkEmail()
       }
       else{
-        getDB("/db.json", (data) => {
+        getDB("db.json", (data) => {
           if(data){
             db = JSON.parse(data);
             checkEmail();
